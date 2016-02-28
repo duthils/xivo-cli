@@ -17,3 +17,13 @@ The XiVO CLI is inspired by the `ip` command interface, in particular the comman
 Currently supported commands:
 
 * xivo-log
+
+Custom commands
+---------------
+
+You may add custom commands to the XiVO CLI by putting any executable named `xivo-*` in your PATH, much like `git` also accepts custom commands. For example, calling:
+```
+xivo custom
+```
+
+will find the executable `xivo-custom` in your path, and execute it, forwarding any remaining argument.
