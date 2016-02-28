@@ -1,0 +1,42 @@
+#!/usr/bin/python3
+
+import glob
+import os
+import os.path
+import shutil
+import sys
+
+from fuzzywuzzy import process
+
+
+def usage(argv):
+    print('{executable} log_file_fuzzy_name')
+
+
+def short_name(long_name):
+    return os.path.basename(long_name[:-4])
+
+
+def best_log_file_name(fuzzy_name):
+    long_names = glob.iglob('/var/log/*.log')
+    candidates = {long_name: short_name(long_name) for long_name in long_names}
+    best = process.extractOne(fuzzy_name, candidates)
+    if not best:
+        print('No log file matching {fuzzy_name}'.format(fuzzy_name=fuzzy_name))
+        exit(2)
+    best_short_name, best_score, best_long_name = best
+    return best_long_name
+
+
+def main(argv):
+    if len(argv) < 2:
+        usage(argv)
+        exit(1)
+
+    fuzzy_name = argv[1]
+    log_file_name = best_log_file_name(fuzzy_name)
+    forward_executable = shutil.which(os.environ.get('PAGER', 'less'))
+    os.execl(forward_executable, forward_executable, log_file_name)
+
+if __name__ == '__main__':
+    main(sys.argv)

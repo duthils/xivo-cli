@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+
+import os
+import shutil
+import sys
+
+
+def usage(argv):
+    print('Usage: {executable} command [args...]'.format(executable=argv[0]))
+
+
+def main(argv):
+    if len(argv) < 2:
+        usage(argv)
+        exit(1)
+
+    forward_executable = shutil.which('xivo-{name}'.format(name=argv[1]))
+    try:
+        os.execv(forward_executable, [forward_executable] + argv[2:])
+    except FileNotFoundError as e:
+        print('{filename}: {error}'.format(filename=forward_executable,
+                                           error=e.strerror))
+
+
+if __name__ == '__main__':
+    main(sys.argv)
