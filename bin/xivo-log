@@ -10,7 +10,7 @@ from fuzzywuzzy import process
 
 
 def usage(argv):
-    print('{executable} log_file_fuzzy_name')
+    print('{executable} log_file_fuzzy_name'.format(executable=argv[0]))
 
 
 def short_name(long_name):
