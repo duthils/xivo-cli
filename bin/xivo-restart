@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+
+import os
+import shutil
+import subprocess
+import sys
+
+from fuzzywuzzy import process
+
+
+def usage(argv):
+    print('{executable} service_fuzzy_name'.format(executable=argv[0]))
+
+
+def list_services():
+    process = subprocess.Popen(['systemctl', 'list-units', '--type', 'service', '--all'],
+                               stdout=subprocess.PIPE)
+    process.wait(timeout=5)
+    decode = (line.decode('utf-8') for line in process.stdout)
+    trim_line = (line for line in decode if '.service' in line)
+    trim_column_right = (line.split('.service')[0] for line in trim_line)
+    trim_column_left = (line[2:] for line in trim_column_right)
+    return trim_column_left
+
+
+def best_service_name(fuzzy_name):
+    candidates = list(list_services())
+    best = process.extractOne(fuzzy_name, candidates)
+    if not best:
+        print('No service matching {fuzzy_name}'.format(fuzzy_name=fuzzy_name))
+        exit(2)
+    best_service_name, best_score = best
+    return best_service_name
+
+
+def main(argv):
+    if len(argv) < 2:
+        usage(argv)
+        exit(1)
+
+    fuzzy_name = argv[1]
+    service_name = best_service_name(fuzzy_name)
+    forward_executable = shutil.which('systemctl')
+    os.execl(forward_executable, forward_executable, 'restart', service_name)
+
+
+if __name__ == '__main__':
+    main(sys.argv)

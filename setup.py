@@ -12,5 +12,7 @@ setup(
     url='http://xivo.io/',
     scripts=['bin/xivo',
              'bin/xivo-l',
-             'bin/xivo-log'],
+             'bin/xivo-log',
+             'bin/xivo-r',
+             'bin/xivo-restart'],
 )

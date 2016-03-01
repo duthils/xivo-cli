@@ -17,6 +17,18 @@ The XiVO CLI is inspired by the `ip` command interface, in particular the comman
 Currently supported commands:
 
 * xivo-log
+```
+xivo l cti
+xivo-log cti
+less /var/log/xivo-ctid.log
+```
+
+* xivo-restart
+```
+xivo r cti
+xivo-restart cti
+systemctl restart xivo-ctid
+```
 
 Custom commands
 ---------------
